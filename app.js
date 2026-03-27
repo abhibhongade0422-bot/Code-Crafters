@@ -864,15 +864,15 @@ function renderBills(app) {
     <div class="page-view"><div class="section-container">
       <div class="section-tag">BILL TRACKER</div>
       <h2 class="page-title">Electricity Bill Analysis</h2>
-      <p class="page-desc">Track your monthly bills and discover usage trends.</p>
+      <p class="page-desc">Upload PDF bills for AI-powered analysis, or enter data manually. Track trends and discover savings.</p>
 
       <div class="card bill-form-card">
         <h3>📄 Add New Bill</h3>
         <div class="bill-upload-area" onclick="document.getElementById('bill-file').click()">
-          <span class="upload-icon">📸</span>
-          <p>Click to upload bill photo (optional)</p>
-          <p class="hint">We'll display a preview — enter details manually below</p>
-          <input type="file" id="bill-file" accept="image/*" style="display:none" onchange="previewBill(this)">
+          <span class="upload-icon">📄</span>
+          <p><strong>Upload your electricity bill (PDF)</strong> or bill photo</p>
+          <p class="hint">🤖 AI will extract units, cost & dates automatically • Drag & drop supported</p>
+          <input type="file" id="bill-file" accept=".pdf,image/*" style="display:none" onchange="handleFileChange(this)">
           <img id="bill-img-preview" class="bill-preview" style="display:none">
         </div>
         <div class="bill-fields">
