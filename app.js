@@ -55,6 +55,140 @@ const DEVICES = {
   ]
 };
 
+// ═══════ ENTERPRISE DEVICE DATABASE ═══════
+const ENTERPRISE_DEVICES = {
+  "Hotel / Hospitality": {
+    "HVAC & Climate": [
+      {id:"ent_central_ac",name:"Central AC Unit",emoji:"❄️",watts:120,tip:"Central AC standby draws heavily — use BMS scheduling",room:"common"},
+      {id:"ent_split_ac_room",name:"Split AC (per room)",emoji:"🌡️",watts:5,tip:"Multiply by room count — key-card AC cutoff saves 40%",room:"room"},
+      {id:"ent_exhaust_fan",name:"Exhaust/Ventilation Fan",emoji:"🌀",watts:8,tip:"Timer-based operation reduces 24/7 standby",room:"common"},
+      {id:"ent_water_heater_central",name:"Central Water Heater",emoji:"🚿",watts:25,tip:"Schedule heating — no need for midnight hot water",room:"common"}
+    ],
+    "Kitchen & Dining": [
+      {id:"ent_commercial_fridge",name:"Commercial Refrigerator",emoji:"🧊",watts:30,tip:"Compressor standby is heavy — regular maintenance helps",room:"kitchen"},
+      {id:"ent_walk_in_cooler",name:"Walk-in Cooler/Freezer",emoji:"🥶",watts:50,tip:"Door sensors prevent unnecessary cooling cycles",room:"kitchen"},
+      {id:"ent_commercial_microwave",name:"Commercial Microwave",emoji:"🍳",watts:5,tip:"Multiple units multiply the phantom load",room:"kitchen"},
+      {id:"ent_coffee_machine",name:"Coffee Machine (Commercial)",emoji:"☕",watts:10,tip:"Schedule off after breakfast service",room:"kitchen"},
+      {id:"ent_dishwasher_comm",name:"Industrial Dishwasher",emoji:"🍽️",watts:15,tip:"Turn off at mains between meal services",room:"kitchen"},
+      {id:"ent_buffet_warmer",name:"Buffet Warmer/Hot Plate",emoji:"🔥",watts:20,tip:"Only power on 30 min before service",room:"kitchen"}
+    ],
+    "Lobby & Common Areas": [
+      {id:"ent_lobby_lighting",name:"Lobby Decorative Lighting",emoji:"💡",watts:40,tip:"Automated dimming after 11 PM saves 60%",room:"common"},
+      {id:"ent_lobby_tv",name:"Lobby/Lounge TV",emoji:"📺",watts:8,tip:"Auto-off timer after midnight",room:"common"},
+      {id:"ent_elevator",name:"Elevator Standby (per unit)",emoji:"🛗",watts:35,tip:"Elevator standby is unavoidable but can be optimized",room:"common"},
+      {id:"ent_reception_pc",name:"Reception Computer",emoji:"🖥️",watts:8,tip:"Enable deep sleep during off-hours",room:"common"},
+      {id:"ent_pos_system",name:"POS/Billing System",emoji:"💳",watts:6,tip:"Shut down overnight — no transactions at 3 AM",room:"common"},
+      {id:"ent_cctv_array",name:"CCTV System (8-16 cam)",emoji:"📷",watts:40,tip:"Motion-only recording saves 30% vs continuous",room:"common"}
+    ],
+    "In-Room (per room)": [
+      {id:"ent_room_tv",name:"Room TV (LED)",emoji:"📺",watts:5,tip:"Key-card power cutoff eliminates standby",room:"room"},
+      {id:"ent_minibar",name:"Mini-Bar Fridge",emoji:"🧃",watts:4,tip:"Thermoelectric minibars draw less but still 24/7",room:"room"},
+      {id:"ent_room_safe",name:"In-Room Safe",emoji:"🔒",watts:2,tip:"Electronic safe standby — small per unit, big at scale",room:"room"},
+      {id:"ent_room_charger",name:"USB Charging Hub",emoji:"🔌",watts:1,tip:"Integrated charging hubs left powered perpetually",room:"room"},
+      {id:"ent_room_kettle",name:"Electric Kettle",emoji:"☕",watts:1.5,tip:"Keep-warm mode wastes power — unplug after use",room:"room"},
+      {id:"ent_room_iron",name:"Iron / Steamer",emoji:"👔",watts:1,tip:"Minimal standby but adds up across 100+ rooms",room:"room"}
+    ],
+    "Laundry & Services": [
+      {id:"ent_washing_machine",name:"Industrial Washer",emoji:"🧺",watts:15,tip:"Standby power of commercial washers is significant",room:"common"},
+      {id:"ent_dryer",name:"Industrial Dryer",emoji:"🌬️",watts:20,tip:"Gas dryers have lower standby than electric",room:"common"},
+      {id:"ent_ironing_press",name:"Commercial Iron Press",emoji:"👕",watts:10,tip:"Turn off between batches — heats up fast",room:"common"}
+    ]
+  },
+  "Hostel / Dormitory": {
+    "Common Areas": [
+      {id:"ent_common_tv",name:"Common Room TV",emoji:"📺",watts:8,tip:"Left on 24/7 in many hostels — huge waste",room:"common"},
+      {id:"ent_common_speaker",name:"Common Room Speaker",emoji:"🔊",watts:5,tip:"Bluetooth standby draws power continuously",room:"common"},
+      {id:"ent_vending_machine",name:"Vending Machine",emoji:"🥤",watts:35,tip:"One of the biggest phantom loads — runs 24/7",room:"common"},
+      {id:"ent_water_cooler",name:"Water Cooler/Dispenser",emoji:"💧",watts:15,tip:"Timer-based cooling reduces overnight waste",room:"common"},
+      {id:"ent_corridor_light",name:"Corridor Lighting (per floor)",emoji:"💡",watts:20,tip:"Motion sensors cut 70% of corridor lighting waste",room:"common"},
+      {id:"ent_cctv_hostel",name:"CCTV System (4-8 cam)",emoji:"📷",watts:25,tip:"Motion-triggered recording saves bandwidth + power",room:"common"}
+    ],
+    "Laundry & Kitchen": [
+      {id:"ent_hostel_washer",name:"Washing Machine",emoji:"🧺",watts:5,tip:"Standby mode draws power even when not washing",room:"common"},
+      {id:"ent_hostel_dryer",name:"Dryer",emoji:"🌬️",watts:8,tip:"Unplug between uses",room:"common"},
+      {id:"ent_hostel_microwave",name:"Shared Microwave",emoji:"🍳",watts:3,tip:"Clock display on 24/7 — same as home",room:"kitchen"},
+      {id:"ent_hostel_fridge",name:"Common Refrigerator",emoji:"🧊",watts:8,tip:"Old fridges in hostels waste up to 40% more",room:"kitchen"}
+    ],
+    "Per-Room / Dorm": [
+      {id:"ent_dorm_fan",name:"Ceiling Fan (per room)",emoji:"🌀",watts:1,tip:"Smart BLDC fans have lower standby",room:"room"},
+      {id:"ent_dorm_chargers",name:"Charging Points (per bed)",emoji:"🔌",watts:0.5,tip:"Multiply by bed count — many chargers left in",room:"room"},
+      {id:"ent_dorm_light",name:"Room Light Fixture",emoji:"💡",watts:1,tip:"Smart switches can cut standby completely",room:"room"},
+      {id:"ent_dorm_ac",name:"Room AC (if applicable)",emoji:"❄️",watts:5,tip:"Timer-controlled AC saves significantly",room:"room"}
+    ],
+    "IT & Admin": [
+      {id:"ent_hostel_wifi",name:"WiFi Router (per floor)",emoji:"📶",watts:8,tip:"Runs 24/7 — consider off-hours scheduling",room:"common"},
+      {id:"ent_hostel_printer",name:"Admin Printer",emoji:"🖨️",watts:5,tip:"Turn off overnight",room:"common"},
+      {id:"ent_hostel_pc",name:"Admin Computer",emoji:"🖥️",watts:8,tip:"Sleep mode still draws 5-8W",room:"common"}
+    ]
+  },
+  "Conference Hall / Banquet": {
+    "AV & Presentation": [
+      {id:"ent_projector",name:"Projector (per unit)",emoji:"📽️",watts:15,tip:"Projector standby keeps lamp warm — big waste",room:"common"},
+      {id:"ent_pa_system",name:"PA / Sound System",emoji:"🔊",watts:20,tip:"Amplifiers in standby draw significant power",room:"common"},
+      {id:"ent_av_mixer",name:"AV Mixer / Controller",emoji:"🎛️",watts:10,tip:"Turn off entire AV rack via master switch",room:"common"},
+      {id:"ent_display_screen",name:"Large Display Screen",emoji:"🖥️",watts:12,tip:"Commercial displays consume more than home TVs",room:"common"},
+      {id:"ent_stage_lighting",name:"Stage Lighting Rig",emoji:"🎭",watts:50,tip:"DMX controllers draw power even with lights off",room:"common"}
+    ],
+    "Climate & Comfort": [
+      {id:"ent_hall_hvac",name:"Hall HVAC System",emoji:"❄️",watts:200,tip:"Schedule HVAC only during events — massive savings",room:"common"},
+      {id:"ent_hall_fan",name:"Industrial Ceiling Fans",emoji:"🌀",watts:15,tip:"Turn off between events",room:"common"},
+      {id:"ent_air_curtain",name:"Air Curtain (entrance)",emoji:"🌬️",watts:25,tip:"Only needed during events when doors open frequently",room:"common"}
+    ],
+    "Lighting & Decor": [
+      {id:"ent_hall_lighting",name:"Hall Ambient Lighting",emoji:"💡",watts:60,tip:"Zoned lighting control prevents full-hall waste",room:"common"},
+      {id:"ent_chandelier",name:"Chandelier / Feature Light",emoji:"✨",watts:30,tip:"LED retrofit reduces standby transformer load",room:"common"},
+      {id:"ent_outdoor_lighting",name:"Outdoor/Facade Lighting",emoji:"🏛️",watts:40,tip:"Timer + photocell = 50% savings",room:"common"}
+    ],
+    "Services": [
+      {id:"ent_hall_kitchen",name:"Catering Kitchen Equipment",emoji:"🍳",watts:25,tip:"Commercial kitchen vampires sum up quickly",room:"kitchen"},
+      {id:"ent_hall_pos",name:"POS / Registration Kiosks",emoji:"💻",watts:8,tip:"Self-service kiosks often left running 24/7",room:"common"},
+      {id:"ent_hall_cctv",name:"Security Camera System",emoji:"📷",watts:30,tip:"Event-only activation protocol saves 70% annually",room:"common"}
+    ]
+  },
+  "Office Building": {
+    "IT Infrastructure": [
+      {id:"ent_server_rack",name:"Server Room / Rack",emoji:"🖧",watts:200,tip:"Server virtualization can eliminate redundant hardware",room:"common"},
+      {id:"ent_network_switch",name:"Network Switches (per floor)",emoji:"🌐",watts:15,tip:"Managed switches can power down unused ports",room:"common"},
+      {id:"ent_office_router",name:"Enterprise Router/Firewall",emoji:"📶",watts:20,tip:"Enterprise networking runs 24/7 by necessity",room:"common"},
+      {id:"ent_ups_rack",name:"UPS Battery Rack",emoji:"🔋",watts:40,tip:"UPS efficiency drops with age — replace every 3-5 yrs",room:"common"}
+    ],
+    "Workstations (per desk)": [
+      {id:"ent_office_monitor",name:"Monitor (per desk)",emoji:"🖵",watts:3,tip:"Multiply by desk count — 100 monitors = 300W standby",room:"room"},
+      {id:"ent_office_desktop",name:"Desktop PC (per desk)",emoji:"🖥️",watts:8,tip:"Enforce shutdown policy via Group Policy",room:"room"},
+      {id:"ent_office_charger",name:"Laptop Charger (per desk)",emoji:"💻",watts:4.5,tip:"Chargers left plugged overnight across fleet",room:"room"},
+      {id:"ent_office_phone",name:"Desk Phone / VoIP",emoji:"📞",watts:2,tip:"PoE phones draw power from network 24/7",room:"room"}
+    ],
+    "Common & Break Room": [
+      {id:"ent_office_printer_lg",name:"Large MFP Printer",emoji:"🖨️",watts:15,tip:"Enterprise printers have high standby — schedule off",room:"common"},
+      {id:"ent_office_coffee",name:"Coffee Machine",emoji:"☕",watts:10,tip:"Auto-off feature saves ₹2,000+/yr per machine",room:"common"},
+      {id:"ent_office_vending",name:"Vending Machine",emoji:"🥤",watts:35,tip:"Vending machines are top commercial vampires",room:"common"},
+      {id:"ent_office_water",name:"Water Dispenser",emoji:"💧",watts:12,tip:"Timer-based cooling for off-hours",room:"common"},
+      {id:"ent_office_microwave",name:"Break Room Microwave",emoji:"🍳",watts:3,tip:"Same phantom load as home — clock always on",room:"common"}
+    ],
+    "Building Systems": [
+      {id:"ent_office_elevator",name:"Elevator (per unit)",emoji:"🛗",watts:35,tip:"Modern elevators have regenerative standby",room:"common"},
+      {id:"ent_office_hvac",name:"HVAC Central System",emoji:"❄️",watts:150,tip:"BMS scheduling for weekends/holidays saves 30%",room:"common"},
+      {id:"ent_office_parking",name:"Parking Gate/Boom System",emoji:"🚗",watts:10,tip:"Barrier systems run 24/7 for minimal transactions",room:"common"},
+      {id:"ent_office_cctv",name:"CCTV (16-32 cam)",emoji:"📷",watts:60,tip:"AI-based recording reduces storage + processing power",room:"common"},
+      {id:"ent_fire_panel",name:"Fire Alarm Panel",emoji:"🚨",watts:8,tip:"Safety system — cannot be turned off but optimize panel",room:"common"}
+    ]
+  }
+};
+
+const BUILDING_TYPES = [
+  {key:'hotel', name:'Hotel / Resort', emoji:'🏨', desc:'Full-service hotels, resorts, lodges', defaultRooms:50, defaultFloors:5, tariff:9},
+  {key:'hostel', name:'Hostel / Dormitory', emoji:'🏠', desc:'Student hostels, PGs, dormitories', defaultRooms:100, defaultFloors:4, tariff:8},
+  {key:'hall', name:'Conference Hall / Banquet', emoji:'🏛️', desc:'Event venues, banquet halls, auditoriums', defaultRooms:3, defaultFloors:2, tariff:10},
+  {key:'office', name:'Office Building', emoji:'🏢', desc:'Corporate offices, co-working spaces', defaultRooms:80, defaultFloors:8, tariff:9}
+];
+
+const BUILDING_TYPE_TO_DEVICE_KEY = {
+  hotel: 'Hotel / Hospitality',
+  hostel: 'Hostel / Dormitory',
+  hall: 'Conference Hall / Banquet',
+  office: 'Office Building'
+};
+
 const CO2_FACTOR = 0.82;
 const HOURS_YEAR = 8760;
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -68,6 +202,13 @@ let gameDeviceStates = {}; // { id: true/false } for game mode
 let chartInstances = {};
 let selectorMode = 'simple'; // 'simple' or 'story'
 let storyRoomIndex = 0;
+
+// ═══════ ENTERPRISE STATE ═══════
+let enterpriseMode = false;
+let selectedBuildingType = null; // 'hotel','hostel','hall','office'
+let enterpriseRooms = 50;
+let enterpriseFloors = 5;
+let selectedEnterpriseDevices = {}; // { id: { ...device, qty } }
 
 const STORY_ROOMS = [
   {
@@ -134,6 +275,8 @@ function handleRoute() {
   else if (hash === '#/reminders') { if(!currentUser){navigate('#/');return;} renderReminders(app); }
   else if (hash === '#/game') { if(!currentUser){navigate('#/');return;} renderGameMode(app); }
   else if (hash === '#/results') { if(!currentUser){navigate('#/');return;} renderResults(app); }
+  else if (hash === '#/enterprise') { if(!currentUser){navigate('#/');return;} renderEnterprise(app); }
+  else if (hash === '#/enterprise-results') { if(!currentUser){navigate('#/');return;} renderEnterpriseResults(app); }
   else { renderLanding(app); }
   updateNavState();
 }
@@ -165,6 +308,7 @@ function updateNavState() {
       <div class="nav-links">
         <a class="nav-link ${hash==='#/dashboard'?'active':''}" href="#/dashboard">Dashboard</a>
         <a class="nav-link ${hash==='#/devices'?'active':''}" href="#/devices">Devices</a>
+        <a class="nav-link ${hash==='#/enterprise'||hash==='#/enterprise-results'?'active':''}" href="#/enterprise">Enterprise</a>
         <a class="nav-link ${hash==='#/bills'?'active':''}" href="#/bills">Bills</a>
         <a class="nav-link ${hash==='#/reminders'?'active':''}" href="#/reminders">Reminders</a>
       </div>
@@ -333,6 +477,7 @@ function renderLanding(app) {
       <div class="hero-bg">
         <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="grid-bg"></div>
       </div>
+      <div id="landing-3d-canvas" class="landing-3d-bg"></div>
       <div class="landing-content">
         <div class="hero-tag">GREEN ENERGY INITIATIVE</div>
         <h1>Your Devices Are <span class="accent-glow">Silently</span> Draining Your Wallet</h1>
@@ -348,6 +493,8 @@ function renderLanding(app) {
         </div>
       </div>
     </div>`;
+  // Trigger 3D
+  if (typeof PhantomWatt3D !== 'undefined') PhantomWatt3D.initForPage('#/');
 }
 
 // ═══════ DASHBOARD ═══════
@@ -389,7 +536,7 @@ function renderDashboard(app) {
   app.innerHTML = `
     <div class="page-view"><div class="section-container">
 
-      <!-- Hero Greeting -->
+      <!-- 3D Energy Orb -->
       <div class="dash-hero">
         <div class="dash-hero-left">
           <div class="section-tag">DASHBOARD</div>
@@ -397,6 +544,7 @@ function renderDashboard(app) {
           <p class="page-desc">${greet.sub}</p>
         </div>
         <div class="dash-hero-gauge">
+          <div id="dashboard-3d-orb" class="dashboard-3d-orb"></div>
           <svg viewBox="0 0 128 128" class="gauge-svg">
             <circle cx="64" cy="64" r="${gaugeRadius}" fill="none" stroke="var(--bg-2)" stroke-width="10" stroke-dasharray="${gaugeCircum * 0.75} ${gaugeCircum * 0.25}" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(135 64 64)"/>
             <circle cx="64" cy="64" r="${gaugeRadius}" fill="none" stroke="${grade.color}" stroke-width="10" stroke-dasharray="${gaugeDash} ${gaugeGap}" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(135 64 64)" class="gauge-fill"/>
@@ -493,6 +641,8 @@ function renderDashboard(app) {
   setTimeout(() => {
     if (bills.length > 0) renderBillTrendChart('dash-trend-chart', bills);
     if (devs.length > 0) renderVampiresChart('dash-vampires-chart', devs, tariff);
+    // 3D orb
+    if (typeof PhantomWatt3D !== 'undefined') PhantomWatt3D.initForPage('#/dashboard');
   }, 50);
 }
 
@@ -560,6 +710,14 @@ function renderSimpleSelector(app) {
         <span style="font-weight:600;font-size:.88rem">⚡ Electricity Tariff</span>
         <div class="tariff-ctrl"><span>₹</span><input type="number" id="tariff-inp" value="${tariff}" min="1" max="20" step="0.5" onchange="saveTariffVal(this.value)"><span>/kWh</span></div>
         <span style="font-size:.72rem;color:var(--text-3)">₹5–₹9/kWh avg</span>
+      </div>
+
+      <div class="dropdown-selector-bar">
+        <div class="dropdown-selector-label">⚡ Quick Add from Dropdown:</div>
+        <select id="device-dropdown" class="device-dropdown" onchange="addFromDropdown(this.value)">
+          <option value="">— Select an appliance to add —</option>
+          ${Object.entries(DEVICES).map(([cat, ds]) => `<optgroup label="${cat}">${ds.map(d => `<option value="${d.id}" ${selectedDevices[d.id]?'disabled':''}>${d.emoji} ${d.name} (${d.watts}W)${selectedDevices[d.id]?' ✓':''}</option>`).join('')}</optgroup>`).join('')}
+        </select>
       </div>
 
       <div class="cat-tabs">${cats.map(c => `<button class="cat-tab ${c===activeCat?'active':''}" onclick="selectCat('${c}')">${c}</button>`).join('')}</div>
@@ -850,7 +1008,55 @@ function renderResults(app) {
   setTimeout(() => {
     renderCatChart('res-cat-chart', devs, tariff);
     renderVampiresChart('res-vamp-chart', devs, tariff);
+    if (typeof PhantomWatt3D !== 'undefined') PhantomWatt3D.initForPage('#/results');
   }, 50);
+}
+
+// Comparison toggle logic
+function toggleComparison() {
+  const comp = document.getElementById('comparison-view');
+  if (comp) comp.style.display = document.getElementById('compare-toggle').checked ? 'block' : 'none';
+}
+
+// Export Report Logic
+function exportReport() {
+  const btn = document.getElementById('export-btn');
+  btn.innerText = '⏳ Generating...';
+  btn.disabled = true;
+
+  const target = document.getElementById('results-export-area');
+  
+  // Make sure globe is hidden during export (html2canvas issues with webgl)
+  const globe = document.getElementById('results-3d-globe');
+  if (globe) globe.style.opacity = '0';
+
+  if (window.html2canvas) {
+    html2canvas(target, {
+      scale: 2,
+      backgroundColor: '#f9f6f0',
+      windowWidth: target.scrollWidth,
+      windowHeight: target.scrollHeight,
+      ignoreElements: (element) => element.id === 'export-btn' || element.id === 'results-3d-globe'
+    }).then(canvas => {
+      if (globe) globe.style.opacity = '1';
+      const link = document.createElement('a');
+      link.download = `PhantomWatt-Report-${new Date().toISOString().split('T')[0]}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      
+      btn.innerText = '✅ Exported!';
+      setTimeout(() => { btn.innerText = '📥 Download Report'; btn.disabled = false; }, 3000);
+    }).catch(err => {
+      console.error("Export failed: ", err);
+      btn.innerText = '❌ Failed';
+      if (globe) globe.style.opacity = '1';
+      setTimeout(() => { btn.innerText = '📥 Download Report'; btn.disabled = false; }, 3000);
+    });
+  } else {
+    alert("html2canvas library is not loaded. Cannot export image.");
+    btn.innerText = '📥 Download Report'; 
+    btn.disabled = false;
+  }
 }
 
 // ═══════ BILLS ═══════
@@ -1190,4 +1396,347 @@ function renderCatChart(canvasId, devs, tariff) {
     data: { labels, datasets:[{data:values,backgroundColor:colors.slice(0,labels.length),borderColor:'#ffffff',borderWidth:3,hoverOffset:6}] },
     options: { responsive:true, maintainAspectRatio:true, plugins:{legend:{position:'bottom',labels:{color:'#6b5e4f',font:{family:'Inter',size:11},padding:12}},tooltip:{callbacks:{label:c=>' ₹'+fmt(c.parsed)+'/yr'}}} }
   });
+}
+
+// ═══════════════════════════════════════════════════
+// ENTERPRISE / BUSINESS MODE
+// ═══════════════════════════════════════════════════
+
+function getEnterpriseTariff() {
+  if (selectedBuildingType) {
+    const bt = BUILDING_TYPES.find(b => b.key === selectedBuildingType);
+    return bt ? bt.tariff : 9;
+  }
+  return 9;
+}
+
+function saveEnterpriseDevices() {
+  if (currentUser) {
+    localStorage.setItem(`pw_${currentUser.email}_ent_devices`, JSON.stringify(selectedEnterpriseDevices));
+    localStorage.setItem(`pw_${currentUser.email}_ent_building`, selectedBuildingType || '');
+    localStorage.setItem(`pw_${currentUser.email}_ent_rooms`, enterpriseRooms);
+    localStorage.setItem(`pw_${currentUser.email}_ent_floors`, enterpriseFloors);
+  }
+}
+
+function loadEnterpriseDevices() {
+  if (currentUser) {
+    const devs = localStorage.getItem(`pw_${currentUser.email}_ent_devices`);
+    if (devs) selectedEnterpriseDevices = JSON.parse(devs);
+    const bt = localStorage.getItem(`pw_${currentUser.email}_ent_building`);
+    if (bt) selectedBuildingType = bt;
+    const rooms = localStorage.getItem(`pw_${currentUser.email}_ent_rooms`);
+    if (rooms) enterpriseRooms = parseInt(rooms);
+    const floors = localStorage.getItem(`pw_${currentUser.email}_ent_floors`);
+    if (floors) enterpriseFloors = parseInt(floors);
+  }
+}
+
+function getEnterpriseDevicesList() {
+  if (!selectedBuildingType) return [];
+  const key = BUILDING_TYPE_TO_DEVICE_KEY[selectedBuildingType];
+  const categories = ENTERPRISE_DEVICES[key];
+  if (!categories) return [];
+  const list = [];
+  Object.entries(categories).forEach(([cat, devs]) => {
+    devs.forEach(d => list.push({...d, category: cat}));
+  });
+  return list;
+}
+
+function calcEnterpriseEffectiveWatts(d) {
+  // Per-room devices are multiplied by room count, per-floor by floor count
+  const qty = d.qty || 1;
+  if (d.room === 'room') return d.watts * qty * enterpriseRooms;
+  if (d.room === 'floor') return d.watts * qty * enterpriseFloors;
+  return d.watts * qty; // common devices, single unit
+}
+
+function getEnterpriseGrade(totalW) {
+  if (totalW <= 200) return {letter:'A+',color:'#00ff88',emoji:'🏆',msg:'Outstanding efficiency!'};
+  if (totalW <= 500) return {letter:'A',color:'#00ff88',emoji:'⭐',msg:'Excellent management!'};
+  if (totalW <= 1000) return {letter:'B',color:'#88ff00',emoji:'👍',msg:'Good, but room to improve'};
+  if (totalW <= 2000) return {letter:'C',color:'#ffaa00',emoji:'⚠️',msg:'Average commercial load'};
+  if (totalW <= 4000) return {letter:'D',color:'#ff6644',emoji:'😟',msg:'High waste — take action!'};
+  return {letter:'F',color:'#ff4d6a',emoji:'🚨',msg:'Critical energy waste!'};
+}
+
+function fmtLakhs(n) {
+  if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' L';
+  return '₹' + fmt(n);
+}
+
+// ═══════ ENTERPRISE SELECTOR PAGE ═══════
+function renderEnterprise(app) {
+  loadEnterpriseDevices();
+  const bt = BUILDING_TYPES.find(b => b.key === selectedBuildingType);
+
+  if (!selectedBuildingType) {
+    // Show building type selector
+    app.innerHTML = `
+      <div class="page-view"><div class="section-container">
+        <div class="section-tag ent-tag">🏢 ENTERPRISE MODE</div>
+        <h2 class="page-title">Commercial / <span class="accent-enterprise">Business</span> Calculator</h2>
+        <p class="page-desc">Estimate phantom power waste for hotels, hostels, halls, and office buildings at scale.</p>
+
+        <div class="ent-mode-switch">
+          <a href="#/devices" class="ent-switch-btn">🏠 Home Mode</a>
+          <button class="ent-switch-btn active">🏢 Enterprise Mode</button>
+        </div>
+
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px;text-align:center">Select Your Building Type</h3>
+        <div class="building-type-grid">
+          ${BUILDING_TYPES.map(b => `
+            <div class="building-type-card" onclick="selectBuildingType('${b.key}')">
+              <span class="bt-emoji">${b.emoji}</span>
+              <div class="bt-name">${b.name}</div>
+              <div class="bt-desc">${b.desc}</div>
+              <div class="bt-meta">Default: ${b.defaultRooms} rooms · ₹${b.tariff}/kWh commercial rate</div>
+              <div class="bt-action">Select →</div>
+            </div>
+          `).join('')}
+        </div>
+      </div></div>`;
+    return;
+  }
+
+  // Show enterprise device selector
+  const tariff = getEnterpriseTariff();
+  const deviceKey = BUILDING_TYPE_TO_DEVICE_KEY[selectedBuildingType];
+  const categories = ENTERPRISE_DEVICES[deviceKey] || {};
+  const catNames = Object.keys(categories);
+  const activeCat = window._entActiveCat || catNames[0] || '';
+  const devList = categories[activeCat] || [];
+
+  const count = Object.keys(selectedEnterpriseDevices).length;
+  const totalEffW = Object.values(selectedEnterpriseDevices).reduce((s,d) => s + calcEnterpriseEffectiveWatts(d), 0);
+  const costY = calcCost(totalEffW, tariff);
+
+  app.innerHTML = `
+    <div class="page-view"><div class="section-container">
+      <div class="section-tag ent-tag">🏢 ENTERPRISE MODE</div>
+      <h2 class="page-title">${bt.emoji} ${bt.name} <span class="accent-enterprise">Phantom Power</span></h2>
+      <p class="page-desc">Select the standby devices in your ${bt.name.toLowerCase()}. Per-room items auto-multiply by room count.</p>
+
+      <div class="ent-mode-switch">
+        <a href="#/devices" class="ent-switch-btn">🏠 Home Mode</a>
+        <button class="ent-switch-btn active">🏢 Enterprise Mode</button>
+      </div>
+
+      <div class="ent-config-bar">
+        <div class="ent-config-item">
+          <span class="ent-config-label">🏢 Building</span>
+          <button class="ent-config-change" onclick="selectedBuildingType=null;selectedEnterpriseDevices={};saveEnterpriseDevices();navigate('#/enterprise')">Change ↺</button>
+        </div>
+        <div class="ent-config-item">
+          <span class="ent-config-label">🚪 Rooms/Units</span>
+          <div class="ent-config-ctrl"><button class="qty-btn" onclick="adjEntRooms(-10)">−</button><span class="ent-config-val">${enterpriseRooms}</span><button class="qty-btn" onclick="adjEntRooms(10)">+</button></div>
+        </div>
+        <div class="ent-config-item">
+          <span class="ent-config-label">🏗️ Floors</span>
+          <div class="ent-config-ctrl"><button class="qty-btn" onclick="adjEntFloors(-1)">−</button><span class="ent-config-val">${enterpriseFloors}</span><button class="qty-btn" onclick="adjEntFloors(1)">+</button></div>
+        </div>
+        <div class="ent-config-item">
+          <span class="ent-config-label">⚡ Tariff</span>
+          <div class="tariff-ctrl"><span>₹</span><input type="number" id="ent-tariff" value="${tariff}" min="1" max="20" step="0.5" onchange="saveEntTariff(this.value)"><span>/kWh</span></div>
+        </div>
+      </div>
+
+      <div class="cat-tabs ent-cat-tabs">${catNames.map(c => `<button class="cat-tab ent-cat-tab ${c===activeCat?'active':''}" onclick="selectEntCat('${c}')">${c}</button>`).join('')}</div>
+
+      <div class="dev-grid">${devList.map(d => renderEntDeviceCard(d)).join('')}</div>
+
+      ${count > 0 ? `
+        <div class="sel-summary ent-summary">
+          <div class="sel-text"><span>${count}</span> devices — <span>${totalEffW.toFixed(1)}W</span> total effective standby (${enterpriseRooms} rooms)</div>
+          <div><span class="ent-cost-preview">${fmtLakhs(costY)}/yr</span></div>
+          <button class="cta-button sm ent-cta" onclick="navigate('#/enterprise-results')">View Enterprise Report →</button>
+        </div>` : ''}
+    </div></div>`;
+}
+
+function selectBuildingType(key) {
+  selectedBuildingType = key;
+  const bt = BUILDING_TYPES.find(b => b.key === key);
+  if (bt) { enterpriseRooms = bt.defaultRooms; enterpriseFloors = bt.defaultFloors; }
+  selectedEnterpriseDevices = {};
+  saveEnterpriseDevices();
+  renderEnterprise(document.getElementById('app'));
+}
+
+function selectEntCat(cat) {
+  window._entActiveCat = cat;
+  renderEnterprise(document.getElementById('app'));
+}
+
+function adjEntRooms(delta) {
+  enterpriseRooms = Math.max(1, Math.min(1000, enterpriseRooms + delta));
+  saveEnterpriseDevices();
+  renderEnterprise(document.getElementById('app'));
+}
+
+function adjEntFloors(delta) {
+  enterpriseFloors = Math.max(1, Math.min(100, enterpriseFloors + delta));
+  saveEnterpriseDevices();
+  renderEnterprise(document.getElementById('app'));
+}
+
+function saveEntTariff(v) {
+  // Store custom tariff
+  if (currentUser) localStorage.setItem(`pw_${currentUser.email}_ent_tariff`, v);
+}
+
+function renderEntDeviceCard(d) {
+  const sel = selectedEnterpriseDevices[d.id];
+  const isOn = !!sel;
+  const qty = sel ? sel.qty : 1;
+  const isPerRoom = d.room === 'room';
+  const effectiveLabel = isPerRoom ? `× ${enterpriseRooms} rooms` : '';
+  return `<div class="dev-card ent-dev-card ${isOn?'selected':''}" onclick="toggleEntDev('${d.id}','${d.category}',event)">
+    <span class="dev-emoji">${d.emoji}</span>
+    <div class="dev-name">${d.name}</div>
+    <div class="dev-watts">Standby: <span>${d.watts}W</span> ${isPerRoom ? '<span class="ent-per-room">per room</span>' : ''}</div>
+    ${isOn ? `<div class="qty-ctrl"><button class="qty-btn" onclick="chgEntQty('${d.id}',-1,event)">−</button><span class="qty-val">${qty}</span><button class="qty-btn" onclick="chgEntQty('${d.id}',1,event)">+</button></div>
+    ${isPerRoom ? `<div class="ent-effective">Effective: ${(d.watts * qty * enterpriseRooms).toFixed(0)}W</div>` : ''}` : ''}
+  </div>`;
+}
+
+function toggleEntDev(id, category, e) {
+  if (e.target.classList.contains('qty-btn')) return;
+  if (selectedEnterpriseDevices[id]) { delete selectedEnterpriseDevices[id]; }
+  else {
+    const allDevs = getEnterpriseDevicesList();
+    const dev = allDevs.find(d => d.id === id);
+    if (dev) selectedEnterpriseDevices[id] = {...dev, qty: 1};
+  }
+  saveEnterpriseDevices();
+  renderEnterprise(document.getElementById('app'));
+}
+
+function chgEntQty(id, delta, e) {
+  e.stopPropagation();
+  if (!selectedEnterpriseDevices[id]) return;
+  const nq = selectedEnterpriseDevices[id].qty + delta;
+  if (nq < 1) delete selectedEnterpriseDevices[id]; else if (nq <= 50) selectedEnterpriseDevices[id].qty = nq;
+  saveEnterpriseDevices();
+  renderEnterprise(document.getElementById('app'));
+}
+
+// ═══════ ENTERPRISE RESULTS PAGE ═══════
+function renderEnterpriseResults(app) {
+  loadEnterpriseDevices();
+  const tariff = getEnterpriseTariff();
+  const devs = Object.values(selectedEnterpriseDevices);
+  if (devs.length === 0) { navigate('#/enterprise'); return; }
+  const bt = BUILDING_TYPES.find(b => b.key === selectedBuildingType);
+
+  const totalEffW = devs.reduce((s,d) => s + calcEnterpriseEffectiveWatts(d), 0);
+  const kwhY = calcKwh(totalEffW);
+  const costY = kwhY * tariff;
+  const co2Y = kwhY * CO2_FACTOR;
+  const grade = getEnterpriseGrade(totalEffW);
+
+  // Separate common vs per-room costs
+  const commonDevs = devs.filter(d => d.room !== 'room');
+  const roomDevs = devs.filter(d => d.room === 'room');
+  const commonW = commonDevs.reduce((s,d) => s + d.watts * (d.qty||1), 0);
+  const roomW = roomDevs.reduce((s,d) => s + d.watts * (d.qty||1) * enterpriseRooms, 0);
+
+  // Top vampires (by effective watts)
+  const sorted = [...devs].map(d => ({
+    ...d,
+    effectiveW: calcEnterpriseEffectiveWatts(d),
+    effectiveCost: calcCost(calcEnterpriseEffectiveWatts(d), tariff)
+  })).sort((a,b) => b.effectiveW - a.effectiveW);
+
+  // 5yr projection
+  let total5 = 0;
+  const yrs = []; for(let i=1;i<=5;i++){const c=costY*Math.pow(1.06,i-1);total5+=c;yrs.push({y:i,c});}
+  const maxC = yrs[4].c;
+
+  // Equivalencies (enterprise scale)
+  const equivs = [
+    {e:'🌳',v:Math.ceil(co2Y/22),l:'Trees needed to offset'},
+    {e:'🚗',v:fmt(Math.round(co2Y/0.21)),l:'Km of car emissions'},
+    {e:'🏠',v:Math.round(costY/2500),l:'Households powered'},
+    {e:'💡',v:fmt(Math.round(kwhY/(0.01*8*365))),l:'LED bulbs 8hr/day'},
+    {e:'🚂',v:Math.round(co2Y/41),l:'Delhi-Mumbai train trips'},
+    {e:'📱',v:fmt(Math.round(kwhY/0.012)),l:'Phone charges'}
+  ];
+
+  // Action plan
+  const actions = [];
+  let potSav = 0;
+  sorted.slice(0,4).forEach(d => {
+    potSav += d.effectiveCost * 0.85;
+    actions.push(`<strong>${d.name}${d.room==='room'?' (×'+enterpriseRooms+' rooms)':''}</strong> — wastes ${fmtLakhs(d.effectiveCost)}/yr at ${d.effectiveW.toFixed(0)}W. ${d.tip}`);
+  });
+  actions.push('<strong>Install BMS (Building Management System)</strong> — automated scheduling cuts phantom load 40-60%.');
+  actions.push('<strong>Key-card power cutoff in rooms</strong> — eliminates in-room standby when guests leave.');
+  actions.push('<strong>Schedule commercial equipment</strong> — kitchen, laundry, AV off during non-operating hours.');
+
+  app.innerHTML = `
+    <div class="page-view"><div class="section-container">
+      <div class="section-tag ent-tag">🏢 ENTERPRISE REPORT</div>
+      <h2 class="page-title">${bt.emoji} ${bt.name} — <span class="accent-enterprise">Impact Report</span></h2>
+      <p class="page-desc">${enterpriseRooms} rooms · ${enterpriseFloors} floors · ₹${tariff}/kWh commercial rate</p>
+
+      <div class="score-card card ent-score-card"><div class="score-circle ent-score-circle" style="border-color:${grade.color}"><span class="score-grade" style="color:${grade.color}">${grade.letter}</span></div><div class="score-info"><h3>Enterprise Energy Score</h3><p>${grade.emoji} ${grade.msg}</p></div></div>
+
+      <div class="cost-grid">
+        <div class="card cost-card ent-cost-primary"><div class="cost-icon">💸</div><div class="cost-value ent-cost-val">${fmtLakhs(costY)}</div><div class="cost-label">Annual Phantom Waste</div><div class="cost-sub">${fmtLakhs(costY/12)}/month</div></div>
+        <div class="card cost-card"><div class="cost-icon">⚡</div><div class="cost-value">${kwhY>=1000?(kwhY/1000).toFixed(1)+' MWh':kwhY.toFixed(1)+' kWh'}</div><div class="cost-label">Energy Wasted / Year</div><div class="cost-sub">${totalEffW>=1000?(totalEffW/1000).toFixed(2)+' kW':totalEffW.toFixed(1)+'W'} total draw</div></div>
+        <div class="card cost-card"><div class="cost-icon">🌍</div><div class="cost-value">${co2Y>=1000?(co2Y/1000).toFixed(2)+' T':co2Y.toFixed(1)+' kg'}</div><div class="cost-label">CO₂ Footprint / Year</div><div class="cost-sub">≈ ${Math.ceil(co2Y/22)} trees to offset</div></div>
+        <div class="card cost-card"><div class="cost-icon">🏢</div><div class="cost-value">${devs.length}</div><div class="cost-label">Device Types Tracked</div><div class="cost-sub">${roomDevs.length} per-room · ${commonDevs.length} building-level</div></div>
+      </div>
+
+      <div class="card ent-breakdown-card" style="margin-bottom:20px">
+        <h3>📊 Cost Breakdown</h3>
+        <div class="ent-breakdown-grid">
+          <div class="ent-breakdown-item">
+            <div class="ent-bk-label">🚪 Per-Room Devices (×${enterpriseRooms})</div>
+            <div class="ent-bk-value">${fmtLakhs(calcCost(roomW, tariff))}/yr</div>
+            <div class="ent-bk-sub">${roomW.toFixed(0)}W effective standby</div>
+          </div>
+          <div class="ent-breakdown-item">
+            <div class="ent-bk-label">🏢 Building-Level Devices</div>
+            <div class="ent-bk-value">${fmtLakhs(calcCost(commonW, tariff))}/yr</div>
+            <div class="ent-bk-sub">${commonW.toFixed(0)}W standby</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px"><h3>💰 5-Year Projection</h3>
+        <div class="proj-items">${yrs.map(y => `<div class="proj-year"><div class="proj-bar" style="height:${(y.c/maxC)*160}px" data-value="${fmtLakhs(y.c)}"></div><div class="proj-lbl">Yr ${y.y}</div></div>`).join('')}</div>
+        <p style="font-size:.85rem;color:var(--text-2);text-align:center;border-top:1px solid var(--border);padding-top:10px">5-year total: <strong style="color:var(--terracotta)">${fmtLakhs(total5)}</strong> (6% annual tariff increase)</p>
+      </div>
+
+      <div class="charts-row">
+        <div class="card"><h3>By Category</h3><div class="chart-wrap"><canvas id="ent-cat-chart"></canvas></div></div>
+        <div class="card"><h3>Top Vampires ${bt.emoji}</h3><div class="chart-wrap"><canvas id="ent-vamp-chart"></canvas></div></div>
+      </div>
+
+      <div style="margin-top:20px"><h3 style="font-size:1.05rem;font-weight:700;margin-bottom:14px">🌱 What Your Building's Phantom Waste Equals</h3>
+        <div class="equiv-grid">${equivs.map(eq=>`<div class="card equiv-card"><span class="equiv-emoji">${eq.e}</span><div class="equiv-val">${typeof eq.v==='number'?fmt(eq.v):eq.v}</div><div class="equiv-lbl">${eq.l}</div></div>`).join('')}</div>
+      </div>
+
+      <div class="card" style="margin-top:20px"><h3>🎯 Enterprise Action Plan</h3>
+        <div class="action-list">${actions.map((a,i)=>`<div class="action-item"><span class="action-num">${i+1}</span><div class="action-text">${a}</div></div>`).join('')}</div>
+        <div class="savings-box ent-savings">Potential annual savings: <strong>${fmtLakhs(potSav)}</strong></div>
+      </div>
+
+      <div style="text-align:center;margin-top:24px">
+        <button class="cta-button secondary" onclick="navigate('#/enterprise')">← Edit Devices</button>
+        <button class="cta-button secondary" style="margin-left:8px" onclick="navigate('#/dashboard')">📊 Dashboard</button>
+      </div>
+    </div></div>`;
+
+  setTimeout(() => {
+    // Category chart
+    const catDevs = devs.map(d => ({...d, watts: calcEnterpriseEffectiveWatts(d) / (d.qty||1), qty: 1}));
+    renderCatChart('ent-cat-chart', catDevs, tariff);
+    // Vampires chart
+    const vampDevs = sorted.slice(0,6).map(d => ({...d, name: d.name + (d.room==='room'?' ×'+enterpriseRooms:''), watts: d.effectiveW, qty: 1}));
+    renderVampiresChart('ent-vamp-chart', vampDevs, tariff);
+  }, 50);
 }

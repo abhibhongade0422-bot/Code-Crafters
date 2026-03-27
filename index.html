@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <!-- html2canvas for report export -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <!-- Three.js for 3D intro -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <!-- PDF.js for bill analysis -->
@@ -65,6 +67,14 @@
                         <div class="explore-item-info">
                             <div class="explore-item-title">Home Simulator</div>
                             <div class="explore-item-desc">Toggle devices ON/OFF in a virtual home</div>
+                        </div>
+                        <span class="explore-item-arrow">→</span>
+                    </button>
+                    <button class="explore-item" onclick="closeExploreDropdown();navigate('#/enterprise')">
+                        <span class="explore-item-icon">🏢</span>
+                        <div class="explore-item-info">
+                            <div class="explore-item-title">Enterprise Mode</div>
+                            <div class="explore-item-desc">Hotels, hostels, halls & office buildings</div>
                         </div>
                         <span class="explore-item-arrow">→</span>
                     </button>
@@ -170,6 +180,7 @@
     <script src="bill-analyzer.js"></script>
     <script src="intro.js"></script>
     <script src="chatbot.js"></script>
+    <script src="3d-elements.js"></script>
 
     <!-- PDF.js setup (non-module fallback) -->
     <script>
