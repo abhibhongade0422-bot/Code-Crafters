@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PhantomWatt — Phantom Power Cost Estimator</title>
-    <meta name="description" content="Discover how much electricity and money you waste from phantom standby power. Get smart insights and reduce your energy footprint.">
+    <title>PhantomWatt — Smart Phantom Power Tracker</title>
+    <meta name="description" content="Track, visualize, and reduce hidden electricity waste from standby devices. Interactive home simulation, bill tracking, and smart reminders.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -12,217 +12,93 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- ═══════════════ HERO SECTION ═══════════════ -->
-    <section id="hero">
-        <div class="hero-bg-effects">
-            <div class="energy-orb orb-1"></div>
-            <div class="energy-orb orb-2"></div>
-            <div class="energy-orb orb-3"></div>
-            <div class="grid-lines"></div>
+    <!-- ═══════ NAVBAR ═══════ -->
+    <nav id="main-nav" class="main-nav">
+        <div class="nav-left">
+            <a href="#/" class="logo"><span class="logo-icon">⚡</span><span class="logo-text">Phantom<span class="accent">Watt</span></span></a>
         </div>
-        <nav class="navbar">
-            <div class="logo">
+        <div class="nav-center" id="mode-toggle-wrap" style="display:none;">
+            <div class="explore-dropdown" id="explore-dropdown">
+                <button class="explore-trigger" onclick="toggleExploreDropdown(event)">
+                    <span class="explore-trigger-icon">🧭</span>
+                    Explore
+                    <svg class="explore-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="explore-menu" id="explore-menu">
+                    <button class="explore-item" onclick="launchStoryMode()">
+                        <span class="explore-item-icon">📖</span>
+                        <div class="explore-item-info">
+                            <div class="explore-item-title">Story Mode</div>
+                            <div class="explore-item-desc">Walk through your home room by room</div>
+                        </div>
+                        <span class="explore-item-arrow">→</span>
+                    </button>
+                    <button class="explore-item" onclick="launchHomeSim()">
+                        <span class="explore-item-icon">🏠</span>
+                        <div class="explore-item-info">
+                            <div class="explore-item-title">Home Simulator</div>
+                            <div class="explore-item-desc">Toggle devices ON/OFF in a virtual home</div>
+                        </div>
+                        <span class="explore-item-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div id="nav-auth-area">
+                <button class="nav-btn ghost" onclick="showAuthModal('login')">Log in</button>
+                <button class="nav-btn primary" onclick="showAuthModal('signup')">Sign up</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════ AUTH MODAL ═══════ -->
+    <div id="auth-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeAuthModal()">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeAuthModal()">✕</button>
+            <div class="modal-header">
                 <span class="logo-icon">⚡</span>
-                <span class="logo-text">Phantom<span class="accent">Watt</span></span>
+                <h2 id="auth-title">Welcome back</h2>
+                <p id="auth-subtitle">Log in to access your dashboard</p>
             </div>
-            <div class="nav-badge">
-                <span class="pulse-dot"></span>
-                India Edition
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <div id="signup-name-field" class="form-group" style="display:none;">
+                    <label>Full Name</label>
+                    <input type="text" id="auth-name" placeholder="Your name" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="auth-email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" required minlength="4" autocomplete="current-password">
+                </div>
+                <div id="auth-error" class="auth-error" style="display:none;"></div>
+                <button type="submit" class="cta-button full-width" id="auth-submit-btn">Log in</button>
+            </form>
+            <div class="auth-switch">
+                <span id="auth-switch-text">Don't have an account?</span>
+                <a href="#" id="auth-switch-link" onclick="toggleAuthMode(event)">Sign up</a>
             </div>
-        </nav>
-        <div class="hero-content">
-            <div class="hero-tag">GREEN ENERGY INITIATIVE</div>
-            <h1>Your Devices Are <span class="accent-glow">Silently</span> Draining Your Wallet</h1>
-            <p class="hero-subtitle">Indian households waste <strong>₹1,500 – ₹3,000 every year</strong> on phantom power — electricity consumed by devices that are plugged in but not in use. That's <strong>₹20,000 crore</strong> nationally.</p>
-            <div class="hero-stats">
-                <div class="stat-pill">
-                    <span class="stat-number">5-10%</span>
-                    <span class="stat-label">of your bill is phantom power</span>
-                </div>
-                <div class="stat-pill">
-                    <span class="stat-number">30B+</span>
-                    <span class="stat-label">units wasted in India yearly</span>
-                </div>
-                <div class="stat-pill">
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">devices drain even when "off"</span>
-                </div>
-            </div>
-            <button id="start-btn" class="cta-button" onclick="scrollToSelector()">
-                <span>Estimate Your Phantom Cost</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
-            </button>
+            <button class="guest-btn" onclick="loginAsGuest()">Continue as Guest →</button>
         </div>
-        <div class="scroll-indicator">
-            <div class="mouse">
-                <div class="wheel"></div>
-            </div>
-        </div>
-    </section>
+    </div>
 
-    <!-- ═══════════════ DEVICE SELECTOR ═══════════════ -->
-    <section id="device-selector">
-        <div class="section-container">
-            <div class="section-header">
-                <div class="section-tag">STEP 1</div>
-                <h2>Select Your Devices</h2>
-                <p>Choose the devices you keep plugged in at home. We've pre-loaded real standby power data from international energy studies.</p>
-            </div>
+    <!-- ═══════ MAIN APP CONTAINER ═══════ -->
+    <main id="app"></main>
 
-            <div class="tariff-bar">
-                <div class="tariff-label">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
-                    Your Electricity Tariff
-                </div>
-                <div class="tariff-control">
-                    <span>₹</span>
-                    <input type="number" id="tariff-input" value="7" min="1" max="20" step="0.5">
-                    <span>/kWh</span>
-                </div>
-                <div class="tariff-hint">Average Indian residential rate: ₹5 – ₹9/kWh</div>
-            </div>
-
-            <div id="category-tabs" class="category-tabs"></div>
-            <div id="device-grid" class="device-grid"></div>
-
-            <div class="custom-device-section">
-                <h3>➕ Add a Custom Device</h3>
-                <div class="custom-device-form">
-                    <input type="text" id="custom-name" placeholder="Device name" maxlength="30">
-                    <input type="number" id="custom-wattage" placeholder="Standby watts" min="0.1" max="100" step="0.1">
-                    <button id="add-custom-btn" onclick="addCustomDevice()">Add Device</button>
-                </div>
-            </div>
-
-            <div class="selected-summary" id="selected-summary" style="display:none;">
-                <div class="summary-text">
-                    <span id="selected-count">0</span> devices selected — 
-                    <span id="total-standby-watts">0</span>W total standby load
-                </div>
-                <button class="cta-button calculate-btn" onclick="calculateResults()">
-                    <span>Calculate My Phantom Cost</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- ═══════════════ RESULTS DASHBOARD ═══════════════ -->
-    <section id="results-dashboard" style="display:none;">
-        <div class="section-container">
-            <div class="section-header">
-                <div class="section-tag">YOUR RESULTS</div>
-                <h2>Phantom Power <span class="accent">Impact Report</span></h2>
-            </div>
-
-            <!-- Energy Score -->
-            <div class="score-card" id="score-card">
-                <div class="score-circle" id="score-circle">
-                    <span class="score-grade" id="score-grade">A</span>
-                </div>
-                <div class="score-info">
-                    <h3>Your Phantom Energy Score</h3>
-                    <p id="score-message">You're doing great! Very low phantom load.</p>
-                </div>
-            </div>
-
-            <!-- Cost Cards -->
-            <div class="cost-grid">
-                <div class="cost-card primary">
-                    <div class="cost-icon">💸</div>
-                    <div class="cost-value" id="cost-yearly">₹0</div>
-                    <div class="cost-label">Wasted Per Year</div>
-                    <div class="cost-sub" id="cost-monthly">₹0/month</div>
-                </div>
-                <div class="cost-card">
-                    <div class="cost-icon">⚡</div>
-                    <div class="cost-value" id="kwh-yearly">0</div>
-                    <div class="cost-label">kWh Wasted / Year</div>
-                    <div class="cost-sub" id="watts-total">0W continuous draw</div>
-                </div>
-                <div class="cost-card">
-                    <div class="cost-icon">🌍</div>
-                    <div class="cost-value" id="co2-yearly">0 kg</div>
-                    <div class="cost-label">CO₂ Emitted / Year</div>
-                    <div class="cost-sub" id="co2-equivalent">Equivalent to 0 trees needed</div>
-                </div>
-                <div class="cost-card">
-                    <div class="cost-icon">📱</div>
-                    <div class="cost-value" id="phone-charges">0</div>
-                    <div class="cost-label">Smartphone Charges</div>
-                    <div class="cost-sub">Worth of wasted energy per year</div>
-                </div>
-            </div>
-
-            <!-- 5-Year Projection -->
-            <div class="projection-card">
-                <h3>💰 5-Year Cost Projection</h3>
-                <div class="projection-bar-container">
-                    <div class="projection-items" id="projection-items"></div>
-                </div>
-                <p class="projection-note" id="projection-total"></p>
-            </div>
-
-            <!-- Charts -->
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3>Phantom Load by Category</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="category-chart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <h3>Top Energy Vampires</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="top-wasters-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Smart Insights -->
-            <div class="insights-section">
-                <div class="insights-header">
-                    <h3>🧠 Smart Insights & Recommendations</h3>
-                    <div class="ai-badge">AI-Powered</div>
-                </div>
-                <div id="insights-list" class="insights-list"></div>
-            </div>
-
-            <!-- Equivalency Fun Facts -->
-            <div class="equivalency-section">
-                <h3>🌱 What Your Phantom Waste Equals</h3>
-                <div class="equivalency-grid" id="equivalency-grid"></div>
-            </div>
-
-            <!-- Action Plan -->
-            <div class="action-plan">
-                <h3>🎯 Your Personalized Action Plan</h3>
-                <div id="action-list" class="action-list"></div>
-                <div class="potential-savings">
-                    <span>Potential Annual Savings:</span>
-                    <strong id="potential-savings">₹0</strong>
-                </div>
-            </div>
-
-            <!-- Recalculate -->
-            <div class="recalculate-section">
-                <button class="cta-button secondary" onclick="resetAndRecalculate()">
-                    <span>← Recalculate with Different Devices</span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
+    <!-- ═══════ FOOTER ═══════ -->
+    <footer id="app-footer">
         <div class="footer-content">
-            <div class="footer-brand">
-                <span class="logo-icon">⚡</span> Phantom<span class="accent">Watt</span>
-            </div>
+            <div class="footer-brand"><span class="logo-icon">⚡</span> Phantom<span class="accent">Watt</span></div>
             <p>Built for Green Energy Hackathon 2026 — Making invisible energy waste visible.</p>
             <p class="footer-data-note">Standby power data sourced from Lawrence Berkeley National Lab, IEA, & BEE India. CO₂ factor: 0.82 kg/kWh (India grid avg).</p>
         </div>
     </footer>
+
+    <!-- ═══════ NOTIFICATION TOAST ═══════ -->
+    <div id="toast" class="toast" style="display:none;"></div>
 
     <script src="app.js"></script>
 </body>
