@@ -1,1 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phantom Power — Cost Estimator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0ede8;
+    --muted: #888580;
+    --accent: #e8ff47;
+    --accent-dim: rgba(232,255,71,0.12);
+    --accent-dim2: rgba(232,255,71,0.06);
+    --red: #ff5c5c;
+    --orange: #ff9f47;
+    --green: #4fffb0;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 0;
+  }
 
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .header-badge {
+    font-size: 11px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(232,255,71,0.25);
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 60px 40px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    max-width: 680px;
+    color: var(--text);
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero-sub {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.7;
+  }
+
+  /* LAYOUT */
+  .main { display: grid; grid-template-columns: 400px 1fr; min-height: calc(100vh - 220px); }
+  @media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
+
+  /* LEFT PANEL */
+  .panel-left {
+    border-right: 1px solid var(--border);
+    padding: 32px 28px;
+    overflow-y: auto;
+  }
+  .panel-section-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  /* ELECTRICITY RATE */
+  .rate-box {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 28px;
+  }
+  .rate-label { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .rate-input-row { display: flex; align-items: center; gap: 10px; }
+  .rate-prefix {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .rate-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    width: 80px;
+    outline: none;
+    padding: 4px 0;
+    transition: border-color 0.2s;
+  }
+  .rate-input:focus { border-bottom-color: var(--accent); }
+  .rate-unit { font-size: 12px; color: var(--muted); }
+
+  /* APPLIANCE SELECTOR */
+  .appliance-select {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    position: relative;
+  }
+  .appliance-select:hover { border-color: rgba(232,255,71,0.3); background: var(--surface2); }
+  .app-icon {
+    width: 36px; height: 36px;
+    background: var(--accent-dim2);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .app-info { flex: 1; }
+  .app-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .app-watt { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .app-qty {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .qty-btn {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    line-height: 1;
+    font-family: 'DM Mono', monospace;
+  }
+  .qty-btn:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .qty-num {
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 16px;
+    text-align: center;
+    color: var(--text);
+  }
+  .qty-num.active { color: var(--accent); }
+
+  /* CALCULATE BUTTON */
+  .calc-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .calc-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+  .calc-btn:active { transform: translateY(0); }
+
+  /* RIGHT PANEL */
+  .panel-right {
+    padding: 32px 36px;
+    overflow-y: auto;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 400px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+  .empty-state p { font-size: 13px; line-height: 1.7; max-width: 280px; }
+
+  /* RESULTS */
+  .results { display: none; }
+  .results.visible { display: block; }
+
+  /* SUMMARY CARDS */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 700px) { .summary-grid { grid-template-columns: 1fr; } }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    transition: border-color 0.2s;
+  }
+  .stat-card.highlight { border-color: rgba(232,255,71,0.3); background: var(--accent-dim2); }
+  .stat-card-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .stat-card-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .stat-card-value.rupee { color: var(--accent); }
+  .stat-card-value.co2 { color: var(--green); }
+  .stat-card-value.kwh { color: var(--orange); }
+  .stat-card-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  /* CHART */
+  .chart-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .chart-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .chart-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .chart-container { position: relative; width: 100%; height: 280px; }
+
+  /* BREAKDOWN TABLE */
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .breakdown-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .breakdown-table th:not(:first-child) { text-align: right; }
+  .breakdown-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  .breakdown-table td:not(:first-child) { text-align: right; }
+  .app-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 8px; vertical-align: middle; }
+  .worst-badge {
+    font-size: 9px;
+    background: rgba(255,92,92,0.15);
+    color: var(--red);
+    border: 1px solid rgba(255,92,92,0.3);
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .save-tip {
+    background: var(--surface);
+    border: 1px solid rgba(79,255,176,0.2);
+    border-left: 3px solid var(--green);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-top: 20px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .save-tip strong { color: var(--green); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Phantom<span>Power</span></div>
+  <div class="header-badge">Energy Vampire Detector</div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Problem Statement 4 — Green Energy</div>
+  <h1>Your devices are draining<br>money while you <em>sleep.</em></h1>
+  <p class="hero-sub">Appliances in standby mode silently consume electricity 24/7. Find out exactly how much it's costing you — in rupees and CO₂.</p>
+</div>
+
+<div class="main">
+
+  <!-- LEFT: CONTROLS -->
+  <div class="panel-left">
+
+    <div class="panel-section-label">Your electricity rate</div>
+    <div class="rate-box">
+      <div class="rate-label">Enter your local rate (check your electricity bill)</div>
+      <div class="rate-input-row">
+        <span class="rate-prefix">₹</span>
+        <input class="rate-input" type="number" id="rate" value="8" min="1" max="30" step="0.5">
+        <span class="rate-unit">per kWh</span>
+      </div>
+    </div>
+
+    <div class="panel-section-label">Select appliances &amp; quantity</div>
+
+    <div id="appliance-list"></div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate my phantom cost →</button>
+  </div>
+
+  <!-- RIGHT: RESULTS -->
+  <div class="panel-right">
+
+    <div class="empty-state" id="empty">
+      <div class="empty-icon">⚡</div>
+      <p>Add your appliances on the left and hit <strong style="color:var(--text)">Calculate</strong> to see your hidden energy cost.</p>
+    </div>
+
+    <div class="results" id="results">
+
+      <div class="panel-section-label" style="margin-bottom:16px;">Annual cost breakdown</div>
+
+      <div class="summary-grid">
+        <div class="stat-card highlight">
+          <div class="stat-card-label">Annual cost</div>
+          <div class="stat-card-value rupee" id="total-cost">₹0</div>
+          <div class="stat-card-sub">per year, wasted</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">CO₂ emitted</div>
+          <div class="stat-card-value co2" id="total-co2">0 kg</div>
+          <div class="stat-card-sub">India grid: 0.82 kg/kWh</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Energy wasted</div>
+          <div class="stat-card-value kwh" id="total-kwh">0 kWh</div>
+          <div class="stat-card-sub">per year</div>
+        </div>
+      </div>
+
+      <div class="chart-wrapper">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Energy vampire ranking</div>
+            <div class="chart-sub">Annual cost per appliance (₹)</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="barChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-wrapper">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Cost share by appliance</div>
+            <div class="chart-sub">Proportion of total phantom spend</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;">
+          <div class="chart-container" style="height:220px;">
+            <canvas id="doughnutChart"></canvas>
+          </div>
+          <div id="legend" style="font-size:12px;line-height:2;"></div>
+        </div>
+      </div>
+
+      <div class="chart-wrapper">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Appliance breakdown</div>
+            <div class="chart-sub">Detailed cost per device</div>
+          </div>
+        </div>
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Appliance</th>
+              <th>Watts</th>
+              <th>kWh/yr</th>
+              <th>Cost/yr</th>
+              <th>CO₂ kg</th>
+            </tr>
+          </thead>
+          <tbody id="breakdown-body"></tbody>
+        </table>
+      </div>
+
+      <div class="save-tip" id="save-tip"></div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const APPLIANCES = [
+  { id:'stb',   name:'Set-top / Cable box', icon:'📺', watts:18,  category:'Entertainment' },
+  { id:'tv',    name:'Smart TV (standby)',   icon:'🖥️', watts:2.5, category:'Entertainment' },
+  { id:'game',  name:'Gaming console',       icon:'🎮', watts:13,  category:'Entertainment' },
+  { id:'micro', name:'Microwave oven',       icon:'📡', watts:4,   category:'Kitchen' },
+  { id:'fridge',name:'Refrigerator',         icon:'🧊', watts:45,  category:'Kitchen' },
+  { id:'wifi',  name:'WiFi router',          icon:'📶', watts:7,   category:'Utilities' },
+  { id:'charge',name:'Phone charger (idle)', icon:'🔌', watts:0.3, category:'Personal' },
+  { id:'laptop',name:'Laptop (sleep mode)',  icon:'💻', watts:1.5, category:'Personal' },
+  { id:'ac',    name:'AC (standby)',         icon:'❄️', watts:3,   category:'Appliances' },
+  { id:'wash',  name:'Washing machine',      icon:'🌀', watts:2,   category:'Appliances' },
+  { id:'music', name:'Music system',         icon:'🎵', watts:8,   category:'Entertainment' },
+  { id:'printer',name:'Printer (standby)',   icon:'🖨️', watts:5,  category:'Office' },
+];
+
+const COLORS = ['#e8ff47','#4fffb0','#ff9f47','#ff5c5c','#a78bfa','#38bdf8','#fb7185','#34d399','#fbbf24','#60a5fa','#f472b6','#94a3b8'];
+
+let barChartInst = null;
+let doughnutInst = null;
+const quantities = {};
+APPLIANCES.forEach(a => quantities[a.id] = 0);
+
+function buildApplianceList() {
+  const container = document.getElementById('appliance-list');
+  container.innerHTML = '';
+  APPLIANCES.forEach((app, i) => {
+    const div = document.createElement('div');
+    div.className = 'appliance-select';
+    div.innerHTML = `
+      <div class="app-icon">${app.icon}</div>
+      <div class="app-info">
+        <div class="app-name">${app.name}</div>
+        <div class="app-watt">${app.watts}W standby · ${app.category}</div>
+      </div>
+      <div class="app-qty">
+        <button class="qty-btn" onclick="changeQty('${app.id}',-1)">−</button>
+        <span class="qty-num" id="qty-${app.id}">0</span>
+        <button class="qty-btn" onclick="changeQty('${app.id}',1)">+</button>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function changeQty(id, delta) {
+  quantities[id] = Math.max(0, (quantities[id] || 0) + delta);
+  const el = document.getElementById('qty-' + id);
+  el.textContent = quantities[id];
+  el.className = 'qty-num' + (quantities[id] > 0 ? ' active' : '');
+}
+
+function calculate() {
+  const rate = parseFloat(document.getElementById('rate').value) || 8;
+  const HOURS_PER_YEAR = 8760;
+  const CO2_PER_KWH = 0.82;
+
+  const data = APPLIANCES.map((app, i) => {
+    const qty = quantities[app.id] || 0;
+    const kwhPerYear = (app.watts * qty * HOURS_PER_YEAR) / 1000;
+    const costPerYear = kwhPerYear * rate;
+    const co2PerYear = kwhPerYear * CO2_PER_KWH;
+    return { ...app, qty, kwhPerYear, costPerYear, co2PerYear, color: COLORS[i] };
+  }).filter(a => a.qty > 0);
+
+  if (data.length === 0) {
+    alert('Please add at least one appliance using the + buttons.');
+    return;
+  }
+
+  const totalCost = data.reduce((s, a) => s + a.costPerYear, 0);
+  const totalKwh  = data.reduce((s, a) => s + a.kwhPerYear, 0);
+  const totalCo2  = data.reduce((s, a) => s + a.co2PerYear, 0);
+
+  document.getElementById('total-cost').textContent = '₹' + Math.round(totalCost).toLocaleString('en-IN');
+  document.getElementById('total-kwh').textContent  = Math.round(totalKwh) + ' kWh';
+  document.getElementById('total-co2').textContent  = Math.round(totalCo2) + ' kg';
+
+  document.getElementById('empty').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').classList.add('visible');
+
+  renderBarChart(data);
+  renderDoughnut(data, totalCost);
+  renderTable(data);
+  renderTip(data, totalCost, totalCo2);
+}
+
+function renderBarChart(data) {
+  const sorted = [...data].sort((a,b) => b.costPerYear - a.costPerYear);
+  if (barChartInst) barChartInst.destroy();
+  barChartInst = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels: sorted.map(a => a.name),
+      datasets: [{
+        data: sorted.map(a => Math.round(a.costPerYear)),
+        backgroundColor: sorted.map(a => a.color + 'cc'),
+        borderColor: sorted.map(a => a.color),
+        borderWidth: 1,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' ₹' + ctx.raw.toLocaleString('en-IN') + '/yr' } }
+      },
+      scales: {
+        x: { ticks: { color: '#888580', font: { family: 'DM Mono', size: 11 }, maxRotation: 30 }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#888580', font: { family: 'DM Mono', size: 11 }, callback: v => '₹'+v }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+}
+
+function renderDoughnut(data, totalCost) {
+  if (doughnutInst) doughnutInst.destroy();
+  doughnutInst = new Chart(document.getElementById('doughnutChart'), {
+    type: 'doughnut',
+    data: {
+      labels: data.map(a => a.name),
+      datasets: [{
+        data: data.map(a => Math.round(a.costPerYear)),
+        backgroundColor: data.map(a => a.color + 'cc'),
+        borderColor: '#111111',
+        borderWidth: 2,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '68%',
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' ₹' + ctx.raw.toLocaleString('en-IN') } }
+      }
+    }
+  });
+
+  const legend = document.getElementById('legend');
+  legend.innerHTML = data.map(a => {
+    const pct = totalCost > 0 ? Math.round(a.costPerYear / totalCost * 100) : 0;
+    return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+      <span style="width:10px;height:10px;border-radius:2px;background:${a.color};flex-shrink:0;display:inline-block;"></span>
+      <span style="color:#888580;font-size:11px;flex:1;">${a.name}</span>
+      <span style="color:#f0ede8;font-size:11px;font-weight:500;">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderTable(data) {
+  const sorted = [...data].sort((a,b) => b.costPerYear - a.costPerYear);
+  const body = document.getElementById('breakdown-body');
+  body.innerHTML = sorted.map((a, i) => `
+    <tr>
+      <td>
+        <span class="app-dot" style="background:${a.color}"></span>
+        ${a.icon} ${a.name} ${a.qty > 1 ? '<span style="color:var(--muted);font-size:10px;">×'+a.qty+'</span>' : ''}
+        ${i === 0 ? '<span class="worst-badge">top vampire</span>' : ''}
+      </td>
+      <td style="color:var(--muted)">${a.watts * a.qty}W</td>
+      <td style="color:var(--orange)">${Math.round(a.kwhPerYear)}</td>
+      <td style="color:var(--accent);font-weight:500">₹${Math.round(a.costPerYear).toLocaleString('en-IN')}</td>
+      <td style="color:var(--green)">${Math.round(a.co2PerYear)}</td>
+    </tr>`).join('');
+}
+
+function renderTip(data, totalCost, totalCo2) {
+  const worst = [...data].sort((a,b) => b.costPerYear - a.costPerYear)[0];
+  const tip = document.getElementById('save-tip');
+  tip.innerHTML = `
+    <strong style="color:var(--text);font-family:'Syne',sans-serif;font-size:14px;">💡 Quick win tip</strong><br><br>
+    Your biggest energy vampire is <strong>${worst.icon} ${worst.name}</strong>, costing you 
+    <strong>₹${Math.round(worst.costPerYear).toLocaleString('en-IN')}/year</strong> just sitting on standby.
+    Unplugging it (or using a smart power strip) could eliminate that cost entirely.<br><br>
+    If you unplugged all listed devices, you would save <strong>₹${Math.round(totalCost).toLocaleString('en-IN')} per year</strong>
+    and prevent <strong>${Math.round(totalCo2)} kg of CO₂</strong> from entering the atmosphere — 
+    equivalent to planting roughly <strong>${Math.round(totalCo2 / 21)} trees</strong>.`;
+}
+
+buildApplianceList();
+</script>
+</body>
+</html>
